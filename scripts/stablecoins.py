@@ -1,16 +1,13 @@
 import numpy as np
 import pandas as pd 
-import pathlib
+
+from utils.tools import load_csv_from_data, export_data_to_csv
 
 def data_cleanup():
-
-    root_path = pathlib.Path(__file__).parent.parent.resolve()
-    data_dir = f"{root_path}/data"
-    csv_file = 'stablecoin_ohlcv.csv'
-
+    
     # Read the CSV 
-    data = pd.read_csv(f"{data_dir}/{csv_file}")
-
+    csv_file = 'stablecoin_ohlcv'
+    data = load_csv_from_data(csv_file)
 
     # Convert to timestamp obj
     data['timestamp'] = pd.to_datetime(data['timestamp'])
@@ -51,10 +48,8 @@ def data_cleanup():
     data['Rolling_Avg_Market_Cap_30'] = data['market_cap'].rolling(window=30).mean()
 
     # Export to CSV
-    exported_path = f"{data_dir}/cleaned/{csv_file}_cleaned.csv"
-    data.to_csv(exported_path, index=False)
-
-    print(f"Data exported to {exported_path}")
+    export_data_to_csv( data, f"{csv_file}_cleaned")
 
 
-
+if __name__ == '__main__': 
+    data_cleanup()

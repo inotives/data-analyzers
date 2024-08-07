@@ -10,3 +10,4 @@ seaborn==0.13.2
 bokeh==3.5.1
 altair==5.3.0
 plotly==5.23.0
+xgboost==2.1.1
