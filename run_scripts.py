@@ -1,7 +1,9 @@
-from scripts.bitcoin_analyser import polynomial_regression_model
+from scripts.price_forecast import PriceForecast
 
 
 if __name__ == '__main__':
 
-    model = polynomial_regression_model()
-    print(model)
+    # try forecasting BTC price with OHLCV daily data 
+    forecast = PriceForecast('btc_ohlcv')
+    forecast_prices = forecast.run_simple_forecast(model='SARIMA', plot_chart=False)
+    print(forecast_prices)
