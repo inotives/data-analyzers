@@ -19,6 +19,10 @@ def load_and_pred_data():
     data.set_index('date', inplace=True)
     # Calculate the total sum of all winning numbers for each draw
     data['total_sum'] = data[['wnum_1', 'wnum_2', 'wnum_3', 'wnum_4', 'wnum_5', 'wnum_6']].sum(axis=1)
+
+    # Ensure the index is sorted (in case it's not already)
+    data = data.sort_index(ascending=True)
+
     
     return data
 
@@ -27,6 +31,8 @@ def win_and_huat(model='simple', num_set=1, plot_draw=False):
     data = load_and_pred_data()
     
     plot_all_draws(data) if plot_draw else None 
+    print('Last Draw WINNING NUM::\n----------------------\n', data.iloc[-1])
+    print(f"GENERATING NUMBER SETS::{num_set}")
 
     if model=='simple':
         for n in range(num_set):
@@ -36,11 +42,9 @@ def win_and_huat(model='simple', num_set=1, plot_draw=False):
             print(f"HUAT-AH::{fp_growth_generator(data)}")
     elif model == 'afpg':
         for n in range(num_set):
-
             generated_numbers = adjusted_fp_growth_generator(data)
-
-            print('Last Draw Winning\n', data.iloc[0])
-            print(f">>>>>>>>> GENERATED NUM (HUAT-AH!!)  ::  {generated_numbers}")
+            print(f"\n>>>>>>>>> GENERATED NUM (HUAT-AH!!) SET({n+1}) ::  {generated_numbers}")
+            print(f"Last 4 Draws Appearances::\n----------------------------------------")
             check_numbers_in_recent_draws(data, generated_numbers)
 
 
@@ -56,8 +60,6 @@ def check_numbers_in_recent_draws(data, generated_numbers, n=4):
     Returns:
     - dict: A dictionary with the percentage of appearance for each generated number.
     """
-    # Ensure the index is sorted (in case it's not already)
-    data = data.sort_index()
 
     # Get the dates of the last 'n' draws
     recent_dates = data.index[-n:]
@@ -83,9 +85,9 @@ def check_numbers_in_recent_draws(data, generated_numbers, n=4):
 
     # Combine counts and percentages into a single dictionary
     results = {num: {'count': counts[num], 'percentage': percentages[num]} for num in generated_numbers}
-
-    for r in results.items():
-        print(r)
+    print(recent_draws[['total_sum', 'odd_cnt','even_cnt', '1to10', '11to20', '21to30', '31to40', '41to49']])
+    for k,r in results.items():
+        print(f"NUM:{k} appear: {int(r['count'])}")
 
     return results
 

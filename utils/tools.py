@@ -22,7 +22,7 @@ def export_data_to_csv(data, filename):
     
     data.to_csv(exported_dir, index=False)
     
-    print(f">> Data exported to {exported_dir}")
+    print(f">> Data exported to :: {exported_dir}")
 
     return 
 
