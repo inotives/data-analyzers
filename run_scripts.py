@@ -16,8 +16,12 @@ if __name__ == '__main__':
     elif command == 'forecast':
         # try forecasting BTC price with OHLCV daily data 
         forecast = PriceForecast('btc_ohlcv')
+
+        num_day = 7
+        if len(sys.argv) >= 3: 
+            num_day = int(sys.argv[2])
         
-        forecast_prices = forecast.run_forecast(model='SARIMAX', plot_chart=True, day=7)
+        forecast_prices = forecast.run_forecast(model='SARIMAX', plot_chart=False, day=num_day)
         print(forecast_prices)
     else: 
         print('>> Not A valid command !\n Available Command: ohlcv, forecast')

@@ -315,7 +315,6 @@ class PriceForecast():
     
     
     def price_forecast_with_SARIMAX_GARCH(self, data, forecast_day, plot_chart=False): 
-
         ''' SARIMAX + GARCH (Generalized Autoregressive Conditional Heteroskedasticity)
         To enhance your current SARIMAX model with a GARCH model, 
         the idea is to first fit the SARIMAX model to capture the mean structure and 
@@ -340,9 +339,6 @@ class PriceForecast():
         3. Autoregressive Structure: GARCH models use past values of the series and past values of 
            the conditional variance to model the current variance. This autoregressive structure 
            helps capture the dynamic nature of volatility.
-        
-
-
         '''
 
         # Ensure the index has a daily frequency
