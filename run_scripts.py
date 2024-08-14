@@ -1,6 +1,7 @@
 import sys
 from scripts.price_forecast import PriceForecast
 from scripts.crypto_ohlcv import enchanced_ohlcv_with_techinical_indicators, process_stablecoins_ohlcv
+from scripts.sentimental_analysis import run_sa
 
 if __name__ == '__main__':
 
@@ -23,5 +24,8 @@ if __name__ == '__main__':
         
         forecast_prices = forecast.run_forecast(model='SARIMAX', plot_chart=False, day=num_day)
         print(forecast_prices)
+
+    elif command == 'sa': 
+        run_sa()
     else: 
         print('>> Not A valid command !\n Available Command: ohlcv, forecast')
