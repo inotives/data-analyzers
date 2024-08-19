@@ -7,7 +7,8 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 from arch import arch_model
 
-from utils.tools import load_csv_from_data, plotly_line_chart
+from utils.tools import load_csv_from_data
+from utils.plot_graph import plotly_line_chart
 
 class PriceForecast():
     

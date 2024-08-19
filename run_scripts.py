@@ -1,7 +1,7 @@
 import sys
 from scripts.price_forecast import PriceForecast
 from scripts.crypto_ohlcv import enchanced_ohlcv_with_techinical_indicators, process_stablecoins_ohlcv
-from scripts.sentimental_analysis import run_sa
+from scripts.run_sentimental_analysis import perform_sentiment_on_news_articles
 
 if __name__ == '__main__':
 
@@ -14,6 +14,7 @@ if __name__ == '__main__':
     if command == 'ohlcv':
         process_stablecoins_ohlcv()
         enchanced_ohlcv_with_techinical_indicators('cryptos_blw1_ohlcv')
+
     elif command == 'forecast':
         # try forecasting BTC price with OHLCV daily data 
         forecast = PriceForecast('btc_ohlcv')
@@ -26,6 +27,7 @@ if __name__ == '__main__':
         print(forecast_prices)
 
     elif command == 'sa': 
-        run_sa()
+        perform_sentiment_on_news_articles()
+        
     else: 
-        print('>> Not A valid command !\n Available Command: ohlcv, forecast')
+        print('>> Not A valid command !\n Available Command: ohlcv, forecast, sa')

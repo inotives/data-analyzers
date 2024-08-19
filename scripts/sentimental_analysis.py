@@ -15,10 +15,7 @@ from sklearn.metrics import classification_report
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
-
 import plotly.express as px
-
-from utils.tools import load_csv_from_data, export_data_to_csv
 
 pd.set_option('max_colwidth', None) # show full width of showing cols
 
@@ -28,20 +25,10 @@ nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-def run_sa():
-    data = load_csv_from_data('_OUTPUT_cointelegraph_news')
+# ---- Sentimental Analysis Main Code ------------------------------------------------------------------
 
-    df = perform_sa(data, 'Title')
-
-    print(df)
-
-    # Visualize sentiment with PLOTLY
-    # visualize_sentiment(df)
-
-    # export_data_to_csv(df, 'SA_cointelegraph_news')
-
-# Preprocessing text 
 def preprocess_text(text):
+    """Preprocessing text """
     # Tokenization
     tokens = word_tokenize(text)
 
@@ -72,8 +59,6 @@ def apply_sentiment_analysis(data, content_col):
     data['sentiment_label'] = data['sentiment_score'].apply(lambda score: 'positive' if score > 0 else 'negative' if score < 0 else 'neutral')
 
     return data
-    
-
 
 def generate_ngrams(data, content_col, ngram_range=(2, 2)):
     """Generate N-Grams from the content column."""
@@ -82,6 +67,7 @@ def generate_ngrams(data, content_col, ngram_range=(2, 2)):
     
     # Convert N-Grams to DataFrame
     ngram_df = pd.DataFrame(ngrams.toarray(), columns=ngram_vectorizer.get_feature_names_out(), index=data.index)
+    
     return ngram_df
 
 
@@ -92,6 +78,7 @@ def apply_tfidf(data, content_col):
     
     # Convert TF-IDF to DataFrame
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), columns=tfidf_vectorizer.get_feature_names_out(), index=data.index)
+    
     return tfidf_df
 
 
@@ -136,22 +123,4 @@ def perform_sa(data, content_col):
     # Use the trained model to predict sentiment labels
     data['predicted_sentiment'] = model.predict(combined_features)
     
-    print("\nFinal DataFrame with Sentiment Predictions:")
-    print(data[['Title', 'predicted_sentiment']])
-    
     return data
-
-
-def visualize_sentiment(data):
-    # Plot sentiment distribution
-    fig = px.bar(
-        data_frame=data,
-        x='sentiment_label',
-        title="Sentiment Analysis Results",
-        labels={'sentiment_label': 'Sentiment', 'count': 'Count'},
-        color='sentiment_label'
-    )
-    fig.show()
-
-    # Print data to review
-    # print(data[['content', 'sentiment_score', 'sentiment_label']])
