@@ -23,6 +23,7 @@ def plotly_line_chart(data, title, xlab, ylab):
 
     return fig
 
+
 def visualize_sentiment(data):
     """Plot sentimental distribution. """
     fig = px.bar(
