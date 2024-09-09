@@ -4,8 +4,6 @@ from utils.db import DBConnection
 from utils.settings import POSTGRES_DB_URL
 
 
-
-
 def perform_sentiment_on_news_articles():
     conn = DBConnection(POSTGRES_DB_URL)
     conn.create_engine()

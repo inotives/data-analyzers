@@ -2,9 +2,10 @@ import pandas as pd
 from sqlalchemy import create_engine, text, insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from utils.settings import POSTGRES_DB_URL
 
 class DBConnection:
-    def __init__(self, db_url: str):
+    def __init__(self, db_url=POSTGRES_DB_URL):
         """Initialize the DBConnection class with the database URL."""
         self.db_url = db_url
         self.engine = None

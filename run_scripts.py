@@ -1,7 +1,8 @@
 import sys
 from scripts.price_forecast import PriceForecast
-from scripts.crypto_ohlcv import enchanced_ohlcv_with_techinical_indicators, process_stablecoins_ohlcv
+from scripts.crypto_ohlcv import enchanced_ohlcv_with_techinical_indicators, process_stablecoins_ohlcv, extract_ohlcv_with_ti
 from scripts.run_sentimental_analysis import perform_sentiment_on_news_articles
+
 
 if __name__ == '__main__':
 
@@ -28,6 +29,9 @@ if __name__ == '__main__':
 
     elif command == 'sa': 
         perform_sentiment_on_news_articles()
+
+    elif command == 'export-ti':
+        extract_ohlcv_with_ti()
         
     else: 
         print('>> Not A valid command !\n Available Command: ohlcv, forecast, sa')
