@@ -31,7 +31,12 @@ if __name__ == '__main__':
         perform_sentiment_on_news_articles()
 
     elif command == 'export-ti':
-        extract_ohlcv_with_ti()
+        try: 
+            crypto_asset = sys.argv[2]
+            extract_ohlcv_with_ti(crypto_asset)
+        except IndexError:
+            print('Please add the crypto asset you want to pull after export-ti <crypto_asset>')
+        
         
     else: 
         print('>> Not A valid command !\n Available Command: ohlcv, forecast, sa')

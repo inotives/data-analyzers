@@ -1,19 +1,6 @@
 import pandas as pd
 import numpy as np
-
-
-def data_load(csvfile, start=None, end=None):
-    """Load Data from CSV to Dataframe"""
-    data = pd.read_csv(csvfile, sep=';', parse_dates=['timeOpen', 'timeClose', 'timeHigh', 'timeLow', 'timestamp'])
-    data = data.rename(columns={'timeOpen': 'date'})
-
-    # extract only ohlcv data and date.
-    ohlcv = data[['date', 'open', 'high', 'low', 'close', 'volume', 'marketCap']].sort_values('date').drop_duplicates(subset=['date']).reset_index(drop=True)
-
-    # Set date as index.
-    ohlcv.set_index('date', inplace=True)
-
-    return ohlcv[start:end]
+from utils.tools import data_load_ohlcv
 
 
 # Feature Engineering: Adding new features ...
@@ -229,7 +216,7 @@ if __name__ == '__main__':
 
     # load csv data to dataframe
     csvfile = 'ohlcv_bitcoin_20240821'
-    data = data_load(f"data/raw/{csvfile}.csv", start='2010-01-01')
+    data = data_load_ohlcv(f"{csvfile}.csv", start='2010-01-01')
 
     # add new feature to ohlcv
     data_with_features = adding_features(data)
