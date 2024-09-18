@@ -331,7 +331,47 @@ def add_indicators_daily(data):
 
     return data
 
+# Extract data to CSV
+def extract_ohlcv(crypto):
+    data = load_crypto_ohlcv_from_db(crypto)
 
+    data = data.round(2)
+    
+    return data 
+
+def extract_ohlcv_aggr_weekly(crypto):
+    data = load_crypto_ohlcv_from_db(crypto)
+
+    # data = data.round(2)
+
+    data['metric_date'] = pd.to_datetime(data['metric_date'])
+
+    data.set_index('metric_date', inplace=True)
+
+    # Resample the data to weekly frequency ('W') and aggregate
+    weekly_df = data.resample('W').agg({
+        'open': 'first',           # First open of the week
+        'high': 'max',             # Highest high of the week
+        'low': 'min',              # Lowest low of the week
+        'close': 'last',           # Last close of the week
+        'volume': 'sum',           # Sum of the volume for the week
+        'market_cap': 'last'       # Last market cap of the week
+    })
+
+    # Calculate weekly market cap growth (percentage change)
+    weekly_df['market_cap_weekly_growth'] = weekly_df['market_cap'].pct_change() * 100
+
+    # Calculate market cap change (difference between this week's and last week's market cap)
+    weekly_df['market_cap_change'] = weekly_df['market_cap'].diff()
+
+    weekly_df['crypto'] = crypto
+
+    # Reset the index to have metric_date as a column again
+    weekly_df.reset_index(inplace=True)
+
+    export_data_to_csv(weekly_df, f"{crypto}-ohlcv-weekly")
+
+    return weekly_df 
 
 # Extract data with TI to CSV
 def extract_ohlcv_with_ti(crypto):
