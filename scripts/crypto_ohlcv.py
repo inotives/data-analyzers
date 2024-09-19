@@ -339,7 +339,8 @@ def extract_ohlcv(crypto):
     
     return data 
 
-def extract_ohlcv_aggr_weekly(crypto):
+# Extract weekly aggregation of OHLCV data for a crypto
+def extract_ohlcv_aggr_weekly(crypto, extract_csv=False):
     data = load_crypto_ohlcv_from_db(crypto)
 
     # data = data.round(2)
@@ -347,6 +348,7 @@ def extract_ohlcv_aggr_weekly(crypto):
     data['metric_date'] = pd.to_datetime(data['metric_date'])
 
     data.set_index('metric_date', inplace=True)
+    data.sort_index()
 
     # Resample the data to weekly frequency ('W') and aggregate
     weekly_df = data.resample('W').agg({
@@ -359,19 +361,62 @@ def extract_ohlcv_aggr_weekly(crypto):
     })
 
     # Calculate weekly market cap growth (percentage change)
-    weekly_df['market_cap_weekly_growth'] = weekly_df['market_cap'].pct_change() * 100
+    weekly_df['mcap_weekly_growth'] = weekly_df['market_cap'].pct_change() * 100
 
     # Calculate market cap change (difference between this week's and last week's market cap)
-    weekly_df['market_cap_change'] = weekly_df['market_cap'].diff()
+    weekly_df['mcap_weekly_change'] = weekly_df['market_cap'].diff()
 
     weekly_df['crypto'] = crypto
 
     # Reset the index to have metric_date as a column again
     weekly_df.reset_index(inplace=True)
 
-    export_data_to_csv(weekly_df, f"{crypto}-ohlcv-weekly")
+    # Extract the csv
+    if extract_csv: export_data_to_csv(weekly_df, f"{crypto}-ohlcv-weekly")
 
     return weekly_df 
+
+# extract the ohlcv weekly aggregation for a list of cyptos
+def extract_ohlcv_weekly(cryptos, start, end):
+    
+    all_dfs = []
+    for crypto in cryptos:
+        all_dfs.append(extract_ohlcv_aggr_weekly(crypto))
+    
+    combine_df = pd.concat(all_dfs, ignore_index=True)
+
+    final_df = combine_df[ (combine_df['metric_date'] >= start) & (combine_df['metric_date'] <= end)  ]
+
+    return final_df.reset_index()
+
+# extract ohlcv weekly aggr for analysis 
+def extract_ohlcv_for_weekly_analysis(extract_csv=False):
+    start = '2024-01-01'
+    end = '2024-09-15'
+
+    stablecoins = ['PayPal USD', 'TrueUSD', 'First Digital USD', 'USDC', 'Tether USDt']
+    stablecoins_df = extract_ohlcv_weekly(stablecoins, start, end )
+    stablecoins_df['type'] = 'stablecoins'
+
+    top_20_tokens = [
+        'Bitcoin', 'Ethereum', 'BNB', 'Solana', 'XRP', 
+        'Dogecoin', 'Toncoin', 'TRON', 'Cardano', 'Avalanche',
+        'Shiba Inu', 'Chainlink', 'Bitcoin Cash', 'Polkadot', 'Litecoin',
+        'NEAR Protocol', 'Kaspa', 'Uniswap', 'Internet Computer', 'Sui'
+    ]
+    tokens_df = extract_ohlcv_weekly(top_20_tokens, start, end)
+    tokens_df['type'] = 'cryptocoins'
+
+
+    all_df = pd.concat([tokens_df, stablecoins_df], ignore_index=True)
+    
+    # To remove a column
+    all_df = all_df.drop(['index'], axis=1) #axis=0 if want to remove row
+
+    if extract_csv: export_data_to_csv(all_df, 'OHLCV_WEEKLY_CRYPTO_ANALYSIS')
+
+    return all_df
+
 
 # Extract data with TI to CSV
 def extract_ohlcv_with_ti(crypto):
